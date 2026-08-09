@@ -34,7 +34,8 @@ export interface LambdaResponse {
 // Loaded once per container lifetime (Lambda cold start), not per-request — avoids re-reading
 // and re-validating risk-kb.json on every invocation. A malformed KB fails loudly here, at
 // startup, rather than silently on whichever request happens to hit it first.
-const kb = loadKnowledgeBase();
+// Exported so server.ts's /health check can report the active version without a second load.
+export const kb = loadKnowledgeBase();
 
 function jsonResponse(statusCode: number, payload: unknown): LambdaResponse {
     return {

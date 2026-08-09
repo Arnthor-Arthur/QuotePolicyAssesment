@@ -43,10 +43,10 @@ add new prompt to write unit test
 - Unit test file 
 
 
-**asked:** Implement a small riskSummary generator that turns appliedFactors into a plain-English sentence
+**asked:** Implement a small riskSummary generator that turns appliedFactors into a plain-English sentence.
 
 **generated:** 
-- backend/src/riskSummary transforming applied factors into plain-English sentence
+- backend/src/riskSummary transforming applied factors into plain-English sentence.
 
 **asked:** implement backend/src/handler.ts exporting handler(event, context): parses the body, validates with Zod (400 on failure), loads the KB, runs the risk engine and premium calculator, and returns the full QuoteResponse including kbVersion. Add a thin local Express (or equivalent) wrapper in backend/src/server.ts for npm start so I can hit POST /policy/quote locally without deploying anything.
 
@@ -71,9 +71,38 @@ add new prompt to write unit test
 - frontend/src/app/: modifying app component to use quote-form component and display to the user in browser
 - update to add 'bungalow' in both backend validation and frontend model
 
+**what i changed and why:** Updating frontend validation form to make it more strict to avoid getting an error 400 comming from backend.
+
+
 **asked::** Wire the dev-server proxy to get a real communication with the backend
 
 **generated:**
--frontend/proxy.conf configuration of the proxy allowing the frontend to talk to the backend localy 
+-frontend/proxy.conf configuration of the proxy allowing the frontend to talk to the backend localy.
 
-**what i changed and why:** 
+**asked:** Build RiskBandBadgeComponent as standalone, takes riskBand as an input(), purely presentational (colour/label per band), no logic beyond mapping band → style. Then build a results panel that renders monthlyPremium, annualPremium, the badge, riskSummary, and a list of appliedFactors (description + points) straight from the API response — no re-derivation of risk logic on the frontend. Write plain CSS, no UI libraries.
+
+**generated:**
+-frontend/src/app/src/app/components/quote-result Renders monthlyPremium/annualPremium (via CurrencyPipe), the badge, riskSummary, and every appliedFactors entry (description + points) directly from the input.
+
+**asked:**Based on AIG UI/UX, update CSS only to match AIG product:
+
+**generated:**
+CCS modification to AIG color and font to match AIG product
+
+**asked:** Review current Jest coverage and make sure all 3 risk bands and at least one compound-condition case are tested end-to-end through the handler, not just the engine in isolation.
+
+**generate:** 
+- backend/src/handler.test.ts calls handler({ body: JSON.stringify(input) }, {}) directly, using the real kb/risk-kb.json
+
+**asked:** Add a GET /health endpoint returning status and the active KB version. Write a multi-stage Dockerfile for the backend suitable for Fargate.
+
+**generate:** 
+- backend/src/server: add GET health endpoint returning KB version
+- backend/dockerfile: multi stage build.
+
+**asked:**  update the condition evaluator i don't want a switch statment, instead implement a lookup table of small functions
+
+**generated:** 
+- backend/src/conditionEvaluator changing from switch cas to look up table of small function so never inspects condition.field or condition.value directly
+
+**what i changed and why:** Add guardrail to unrecognized operator to prevent malform KB to reaching the evaluator system

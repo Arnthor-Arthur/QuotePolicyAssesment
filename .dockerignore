@@ -1,0 +1,11 @@
+# Build context is the repo root (see backend/Dockerfile) — keep it to just what
+# the backend image actually needs: backend/{package.json,package-lock.json,tsconfig.json,src}
+# and kb/. Everything below is irrelevant to that image and only slows down `docker build`.
+frontend
+**/node_modules
+**/dist
+**/coverage
+**/.angular
+**/out-tsc
+.git
+*.log

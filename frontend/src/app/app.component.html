@@ -1,4 +1,18 @@
 <main>
   <h1>{{ title }}</h1>
-  <app-quote-form></app-quote-form>
+  <app-quote-form #primaryForm></app-quote-form>
+
+  <button type="button" class="compare-toggle" (click)="toggleComparisonMode()">
+    {{ comparisonMode() ? 'Hide comparison quote' : 'Compare with another quote' }}
+  </button>
+
+  @if (comparisonMode()) {
+    <app-quote-form #comparisonForm [showNameField]="false"></app-quote-form>
+
+    @if (primaryForm.quoteResult(); as resultA) {
+      @if (comparisonForm.quoteResult(); as resultB) {
+        <app-comparison-result [comparisonA]="resultA" [comparisonB]="resultB"></app-comparison-result>
+      }
+    }
+  }
 </main>

@@ -1,0 +1,88 @@
+.comparison-result {
+  margin-top: 1.5rem;
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 57.5rem;
+  background: #fff;
+  border: 1px solid var(--brand-border-light);
+  border-top: 4px solid var(--brand-navy);
+}
+
+h2 {
+  margin: 0 0 1rem;
+  font-size: 1.1rem;
+  color: var(--brand-navy);
+}
+
+h3 {
+  margin: 0 0 0.5rem;
+  font-size: 0.95rem;
+  color: var(--brand-text);
+}
+
+.comparison-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.comparison-table th,
+.comparison-table td {
+  padding: 0.6rem;
+  text-align: left;
+  border-bottom: 1px solid var(--brand-border-light);
+}
+
+.comparison-table thead th {
+  color: var(--brand-text-secondary);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.comparison-table td.cheaper {
+  background: color-mix(in srgb, var(--brand-success) 15%, transparent);
+  font-weight: 700;
+  color: var(--brand-navy);
+}
+
+.comparison-summary {
+  margin-top: 1rem;
+  color: var(--brand-text);
+}
+
+.factor-lists {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.factor-list {
+  flex: 1 1 15rem;
+}
+
+.factor-list ul {
+  margin: 0;
+  padding-left: 0;
+  list-style: none;
+}
+
+.factor-list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.4rem 0;
+  border-bottom: 1px solid var(--brand-border-light);
+  font-size: 0.9rem;
+}
+
+.factor-list .points {
+  color: var(--brand-text-secondary);
+  white-space: nowrap;
+}
+
+.factor-list .empty {
+  color: var(--brand-text-secondary);
+  font-size: 0.9rem;
+  margin: 0;
+}

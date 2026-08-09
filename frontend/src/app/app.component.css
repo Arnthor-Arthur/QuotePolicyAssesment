@@ -19,3 +19,24 @@ h1 {
   text-transform: uppercase;
   text-align: center;
 }
+
+/* Secondary action, deliberately distinct from the form's primary filled CTA button. */
+.compare-toggle {
+  margin-top: 1.5rem;
+  padding: 0.6rem 1.125rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  font-family: inherit;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  background: transparent;
+  color: var(--brand-navy);
+  border: 1px solid var(--brand-navy);
+  border-radius: 0;
+  cursor: pointer;
+}
+
+.compare-toggle:hover {
+  background: var(--brand-navy);
+  color: #fff;
+}

@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, signal } from '@angular/core';
+import { Component, effect, input, signal } from '@angular/core';
 import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { PROPERTY_TYPES, QuoteRequest, QuoteResponse } from '../../models/quote.model';
 import { QuoteService } from '../../services/quote.service';
@@ -22,6 +22,10 @@ function integerValidator(control: AbstractControl<number | null>): ValidationEr
     styleUrl: './quote-form.component.css',
 })
 export class QuoteFormComponent {
+    // Default true keeps the primary form's existing behavior unchanged; the comparison
+    // form instance binds this to false.
+    readonly showNameField = input(true);
+
     readonly propertyTypes = PROPERTY_TYPES;
 
     readonly loading = signal(false);
@@ -47,7 +51,23 @@ export class QuoteFormComponent {
     constructor(
         private readonly fb: FormBuilder,
         private readonly quoteService: QuoteService,
-    ) {}
+    ) {
+        // The `name` control always exists in the group (keeps the FormGroup's type simple —
+        // Angular's typed reactive forms don't cleanly support add/removeControl without
+        // losing type safety); what changes is whether it's enabled/required, driven by the
+        // showNameField input signal so it reacts correctly however it's bound.
+        effect(() => {
+            const nameControl = this.form.controls.name;
+            if (this.showNameField()) {
+                nameControl.enable({ emitEvent: false });
+                nameControl.setValidators(Validators.required);
+            } else {
+                nameControl.disable({ emitEvent: false });
+                nameControl.clearValidators();
+            }
+            nameControl.updateValueAndValidity({ emitEvent: false });
+        });
+    }
 
     onSubmit(): void {
         if (this.form.invalid) {
@@ -59,12 +79,14 @@ export class QuoteFormComponent {
         // Non-null: Validators.required on age/propertyValue already guaranteed by the
         // invalid-check above, so these two can only be null before the form is valid.
         const request: QuoteRequest = {
-            name: raw.name,
             age: raw.age!,
             propertyType: raw.propertyType,
             propertyValue: raw.propertyValue!,
             postcode: raw.postcode,
             previousClaims: raw.previousClaims,
+            // Omitted entirely (not sent as '') when hidden — the backend still rejects an
+            // explicit empty string, only an absent key gets the server-side "N/A" default.
+            ...(this.showNameField() ? { name: raw.name } : {}),
         };
 
         this.loading.set(true);

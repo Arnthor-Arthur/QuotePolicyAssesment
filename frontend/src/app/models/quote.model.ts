@@ -9,7 +9,9 @@ export type PropertyType = (typeof PROPERTY_TYPES)[number];
 export type RiskBand = 'STANDARD' | 'ELEVATED' | 'HIGH_RISK';
 
 export interface QuoteRequest {
-    name: string;
+    // Optional: the backend defaults an omitted name to "N/A" (used by the comparison-quote
+    // form). Sending an explicit empty string is still rejected server-side — omit the key.
+    name?: string;
     age: number;
     propertyType: PropertyType;
     propertyValue: number;
@@ -38,4 +40,17 @@ export interface QuoteResponse {
     coverageDetails: CoverageDetails;
     appliedFactors: AppliedFactor[];
     kbVersion: string;
+}
+
+// Purely a diff of two already-computed QuoteResponses — carries no risk-scoring logic
+// of its own (see quote-comparison.service.ts).
+export interface QuoteComparison {
+    cheaperOption: 'A' | 'B' | 'equal';
+    // Always >= 0 — magnitude only. Direction is what cheaperOption is for; pairing a
+    // signed number with cheaperOption would just invite "which sign means what" bugs.
+    monthlyPremiumDifference: number;
+    riskBandChanged: boolean;
+    factorsOnlyInA: AppliedFactor[];
+    factorsOnlyInB: AppliedFactor[];
+    sharedFactors: AppliedFactor[];
 }

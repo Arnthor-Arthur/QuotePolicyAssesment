@@ -1,0 +1,86 @@
+<section class="comparison-result">
+  <h2>Comparison</h2>
+
+  <table class="comparison-table">
+    <thead>
+      <tr>
+        <th scope="col"></th>
+        <th scope="col">Quote A</th>
+        <th scope="col">Quote B</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th scope="row">Risk band</th>
+        <td>
+          <app-risk-band-badge [riskBand]="comparisonA().riskBand"></app-risk-band-badge>
+        </td>
+        <td>
+          <app-risk-band-badge [riskBand]="comparisonB().riskBand"></app-risk-band-badge>
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">Monthly premium</th>
+        <td [class.cheaper]="comparison().cheaperOption === 'A'">
+          {{ comparisonA().monthlyPremium | currency: 'GBP' }}
+        </td>
+        <td [class.cheaper]="comparison().cheaperOption === 'B'">
+          {{ comparisonB().monthlyPremium | currency: 'GBP' }}
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p class="comparison-summary">
+    @if (comparison().cheaperOption === 'equal') {
+      Both quotes cost the same per month.
+    } @else {
+      Quote {{ comparison().cheaperOption }} is
+      {{ comparison().monthlyPremiumDifference | currency: 'GBP' }} cheaper per month.
+    }
+    @if (comparison().riskBandChanged) {
+      The risk band differs between the two quotes.
+    }
+  </p>
+
+  <div class="factor-lists">
+    <div class="factor-list">
+      <h3>Only in Quote A</h3>
+      @if (comparison().factorsOnlyInA.length === 0) {
+        <p class="empty">None</p>
+      } @else {
+        <ul>
+          @for (factor of comparison().factorsOnlyInA; track factor.id) {
+            <li><span class="description">{{ factor.description }}</span><span class="points">{{ factor.points }} pts</span></li>
+          }
+        </ul>
+      }
+    </div>
+
+    <div class="factor-list">
+      <h3>Only in Quote B</h3>
+      @if (comparison().factorsOnlyInB.length === 0) {
+        <p class="empty">None</p>
+      } @else {
+        <ul>
+          @for (factor of comparison().factorsOnlyInB; track factor.id) {
+            <li><span class="description">{{ factor.description }}</span><span class="points">{{ factor.points }} pts</span></li>
+          }
+        </ul>
+      }
+    </div>
+
+    <div class="factor-list">
+      <h3>Shared factors</h3>
+      @if (comparison().sharedFactors.length === 0) {
+        <p class="empty">None</p>
+      } @else {
+        <ul>
+          @for (factor of comparison().sharedFactors; track factor.id) {
+            <li><span class="description">{{ factor.description }}</span><span class="points">{{ factor.points }} pts</span></li>
+          }
+        </ul>
+      }
+    </div>
+  </div>
+</section>

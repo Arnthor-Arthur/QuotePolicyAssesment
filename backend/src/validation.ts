@@ -7,7 +7,11 @@ const UK_POSTCODE_REGEX = /^[A-Z]{1,2}\d[A-Z\d]?\s?\d[A-Z]{2}$/i;
 
 export const quoteRequestSchema = z
     .object({
-        name: z.string().min(1, 'Name is required'),
+        // Optional: the comparison-quote form omits it entirely rather than sending ''
+        // (which would still fail min(1)) — .default() makes the key omittable and
+        // guarantees the output is always a string, so nothing downstream needs to
+        // handle an absent name.
+        name: z.string().min(1, 'Name is required').default('N/A'),
         age: z.number().int().min(18, 'Applicant must be at least 18').max(120, 'Age must be realistic'),
         propertyType: z.enum(PROPERTY_TYPES),
         propertyValue: z.number().positive('Property value must be greater than 0'),

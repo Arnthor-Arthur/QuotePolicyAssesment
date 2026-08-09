@@ -35,16 +35,20 @@ describe('quoteRequestSchema — happy path', () => {
     });
 });
 
-describe('quoteRequestSchema — rejections', () => {
-    test('rejects an empty name', () => {
+describe('quoteRequestSchema — optional name', () => {
+    test('defaults to "N/A" when name is omitted entirely (the comparison-quote form)', () => {
+        const { name, ...rest } = validInput;
+        const result = quoteRequestSchema.safeParse(rest);
+        expect(result.success).toBe(true);
+        expect(result.data?.name).toBe('N/A');
+    });
+
+    test('still rejects an explicit empty string — omit the key, not ""', () => {
         expect(quoteRequestSchema.safeParse({ ...validInput, name: '' }).success).toBe(false);
     });
+});
 
-    test('rejects a missing name', () => {
-        const { name, ...rest } = validInput;
-        expect(quoteRequestSchema.safeParse(rest).success).toBe(false);
-    });
-
+describe('quoteRequestSchema — rejections', () => {
     test('rejects age under 18', () => {
         expect(quoteRequestSchema.safeParse({ ...validInput, age: 17 }).success).toBe(false);
     });

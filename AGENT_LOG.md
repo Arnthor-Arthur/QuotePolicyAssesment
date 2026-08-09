@@ -106,3 +106,22 @@ CCS modification to AIG color and font to match AIG product
 - backend/src/conditionEvaluator changing from switch cas to look up table of small function so never inspects condition.field or condition.value directly
 
 **what i changed and why:** Add guardrail to unrecognized operator to prevent malform KB to reaching the evaluator system
+
+-------------------------------------------------------------
+
+superbonus 
+
+**asked:**Add a "Compare with another quote" toggle button above or below the existing quote results. Use a signal<boolean> for comparisonMode in the parent component. When toggled on, render a second instance of the existing quote form component, reusing it rather than duplicating markup add an input() to the form component called showNameField (default true) that conditionally includes/excludes the name FormControl and its validator. When showNameField is false, omit name entirely from the emitted form value rather than submitting an empty string. Make name optional in the backend's Zod schema (QuoteRequest) and default it to "N/A" server-side if absent this is a validation change only, no risk engine or KB change. Each form instance manages its own quoteResult signal independently, exactly like the current single-form flow.
+
+**generated:** 
+- backend validation updated to allow the second form to be send without name
+- quote formComponent added to display new section
+- frontend model update to put name as optional to prevent failure 
+- App component add comparison mode toggle to displya second form
+
+**asked:** Create frontend/src/app/services/quote-comparison.service.ts — a pure, stateless service with one function compareQuotes(a: QuoteResponse, b: QuoteResponse): QuoteComparison. Define QuoteComparison in models/quote.model.ts with: cheaperOption: 'A' | 'B' | 'equal', monthlyPremiumDifference: number, riskBandChanged: boolean, factorsOnlyInA: AppliedFactor[], factorsOnlyInB: AppliedFactor[], sharedFactors: AppliedFactor[] (diff by factor id, not by array position). No hardcoded factor logic — this only operates on the two QuoteResponse objects already returned by the API, it doesn't re-derive risk. Then build a ComparisonResultComponent, standalone, taking comparisonA and comparisonB as input()s, computing the QuoteComparison via a computed() signal wrapping the service call, and rendering a side-by-side table: both premiums with the cheaper one highlighted, both risk bands, and three lists (factors unique to A, unique to B, shared). Wire it into the parent so it appears once both forms have a quoteResult
+
+**generated:**
+- QuoteComparison added to quote model  
+- QuoteComparisonService service that compare two quote result from QuoteResponse Object 
+- ComparisonResultComponent component to display the result of the comparison to the user

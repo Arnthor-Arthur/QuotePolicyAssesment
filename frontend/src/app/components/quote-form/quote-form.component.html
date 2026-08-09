@@ -1,12 +1,14 @@
 <div class="quote-layout">
   <form class="quote-form" [formGroup]="form" (ngSubmit)="onSubmit()">
-    <div class="field">
-      <label for="name">Name</label>
-      <input id="name" type="text" formControlName="name" />
-      @if (form.controls.name.invalid && form.controls.name.touched) {
-        <span class="error">Name is required.</span>
-      }
-    </div>
+    @if (showNameField()) {
+      <div class="field">
+        <label for="name">Name</label>
+        <input id="name" type="text" formControlName="name" />
+        @if (form.controls.name.invalid && form.controls.name.touched) {
+          <span class="error">Name is required.</span>
+        }
+      </div>
+    }
 
     <div class="field">
       <label for="age">Age</label>

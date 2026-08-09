@@ -9,7 +9,10 @@ describe('QuoteFormComponent', () => {
     let component: QuoteFormComponent;
     let httpMock: HttpTestingController;
 
-    const validFormValues: QuoteRequest = {
+    // QuoteRequest's `name` is optional (the comparison form omits it); this fixture always
+    // has a concrete one, which is what form.setValue() needs — the name control is always
+    // FormControl<string>, never undefined, regardless of whether it's shown.
+    const validFormValues: Omit<QuoteRequest, 'name'> & { name: string } = {
         name: 'Jane Doe',
         age: 40,
         propertyType: 'House',
@@ -131,6 +134,63 @@ describe('QuoteFormComponent', () => {
         it('accepts a postcode without a space, matching the backend regex', () => {
             component.form.setValue({ ...validFormValues, postcode: 'EX41AB' });
             expect(component.form.controls.postcode.valid).toBe(true);
+        });
+    });
+
+    describe('showNameField', () => {
+        it('is enabled and required by default', () => {
+            expect(component.form.controls.name.disabled).toBe(false);
+            component.form.controls.name.setValue('');
+            expect(component.form.controls.name.invalid).toBe(true);
+        });
+
+        it('disables the control and clears its validator when set to false', () => {
+            fixture.componentRef.setInput('showNameField', false);
+            fixture.detectChanges();
+
+            expect(component.form.controls.name.disabled).toBe(true);
+            expect(component.form.controls.name.validator).toBeNull();
+        });
+
+        it('re-enables and re-requires the control if switched back to true', () => {
+            fixture.componentRef.setInput('showNameField', false);
+            fixture.detectChanges();
+            fixture.componentRef.setInput('showNameField', true);
+            fixture.detectChanges();
+
+            expect(component.form.controls.name.disabled).toBe(false);
+            component.form.controls.name.setValue('');
+            expect(component.form.controls.name.invalid).toBe(true);
+        });
+
+        it('hides the Name field from the template when false', () => {
+            fixture.componentRef.setInput('showNameField', false);
+            fixture.detectChanges();
+
+            const nameInput = (fixture.nativeElement as HTMLElement).querySelector('#name');
+            expect(nameInput).toBeNull();
+        });
+
+        it('is valid to submit without ever touching name when hidden', () => {
+            fixture.componentRef.setInput('showNameField', false);
+            fixture.detectChanges();
+
+            const { name, ...rest } = validFormValues;
+            component.form.patchValue(rest);
+            expect(component.form.valid).toBe(true);
+        });
+
+        it('omits name entirely from the submitted request body — not as an empty string', () => {
+            fixture.componentRef.setInput('showNameField', false);
+            fixture.detectChanges();
+
+            const { name, ...rest } = validFormValues;
+            component.form.patchValue(rest);
+            component.onSubmit();
+
+            const req = httpMock.expectOne('/policy/quote');
+            expect(req.request.body).toEqual(rest);
+            req.flush(mockResponse);
         });
     });
 });

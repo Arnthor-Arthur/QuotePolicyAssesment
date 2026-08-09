@@ -53,3 +53,26 @@ add new prompt to write unit test
 **generated:**
 - backend/src/handler: contain backend handler to receive and parse request, then the method compute each method to get risk assesment / premium cost and risk summary.
 - backend/src/server: contain express POST endpoint use handler to verify request
+
+**asked:** Implemtn frontend/src/app/models/quote.model.ts mirroring the backend's QuoteResponse and request types exactly.
+
+**generated:**
+-frontendsrc/app/models/quote.model: containing all interfaces mirroring backend structure with a contract field-for-field
+
+**asked:** Create frontend/src/app/services/quote.service.ts using HttpClient to POST to /policy/quote. The endpoint return an observable without UI
+
+**generated:** 
+-frontend/src/app/services/quote.service: service containing the call to the backend
+
+**asked:** Build the quote form as a standalone component using Reactive Forms: name, age, property type (select: House/Flat/Bungalow), property value, postcode, previous claims. On submit, call quoteService, and manage loading, quoteResult, errorMessage as signal()s (not BehaviorSubject) in the component. Convert the HttpClient Observable into signal updates.
+
+**generated:** 
+- frontend/src/app/components/quote-form containing form component and style requesting quote service once user validate input
+- frontend/src/app/: modifying app component to use quote-form component and display to the user in browser
+- update to add 'bungalow' in both backend validation and frontend model
+
+**asked::** Wire the dev-server proxy to get a real communication with the backend
+
+**generated:**
+-frontend/proxy.conf configuration of the proxy allowing the frontend to talk to the backend localy 
+

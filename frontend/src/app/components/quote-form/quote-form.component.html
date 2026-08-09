@@ -1,0 +1,79 @@
+<form class="quote-form" [formGroup]="form" (ngSubmit)="onSubmit()">
+  <div class="field">
+    <label for="name">Name</label>
+    <input id="name" type="text" formControlName="name" />
+    @if (form.controls.name.invalid && form.controls.name.touched) {
+      <span class="error">Name is required.</span>
+    }
+  </div>
+
+  <div class="field">
+    <label for="age">Age</label>
+    <input id="age" type="number" formControlName="age" />
+    @if (form.controls.age.invalid && form.controls.age.touched) {
+      <span class="error">Age must be between 18 and 120.</span>
+    }
+  </div>
+
+  <div class="field">
+    <label for="propertyType">Property type</label>
+    <select id="propertyType" formControlName="propertyType">
+      @for (type of propertyTypes; track type) {
+        <option [value]="type">{{ type }}</option>
+      }
+    </select>
+  </div>
+
+  <div class="field">
+    <label for="propertyValue">Property value (£)</label>
+    <input id="propertyValue" type="number" formControlName="propertyValue" />
+    @if (form.controls.propertyValue.invalid && form.controls.propertyValue.touched) {
+      <span class="error">Property value must be greater than 0.</span>
+    }
+  </div>
+
+  <div class="field">
+    <label for="postcode">Postcode</label>
+    <input id="postcode" type="text" formControlName="postcode" placeholder="e.g. EX4 1AB" />
+    @if (form.controls.postcode.invalid && form.controls.postcode.touched) {
+      <span class="error">Postcode is required.</span>
+    }
+  </div>
+
+  <div class="field">
+    <label for="previousClaims">Previous claims</label>
+    <input id="previousClaims" type="number" formControlName="previousClaims" />
+    @if (form.controls.previousClaims.invalid && form.controls.previousClaims.touched) {
+      <span class="error">Previous claims cannot be negative.</span>
+    }
+  </div>
+
+  <button type="submit" [disabled]="loading()">
+    {{ loading() ? 'Getting your quote…' : 'Get quote' }}
+  </button>
+</form>
+
+@if (errorMessage()) {
+  <p class="error banner">{{ errorMessage() }}</p>
+}
+
+@if (quoteResult(); as result) {
+  <section class="quote-result">
+    <h2>{{ result.riskBand }} risk</h2>
+    <p>{{ result.riskSummary }}</p>
+    <p>
+      <strong>{{ result.monthlyPremium | currency: 'GBP' }}</strong> / month
+      ({{ result.annualPremium | currency: 'GBP' }} / year)
+    </p>
+
+    @if (result.appliedFactors.length > 0) {
+      <ul class="applied-factors">
+        @for (factor of result.appliedFactors; track factor.id) {
+          <li>{{ factor.description }} ({{ factor.points }} pts)</li>
+        }
+      </ul>
+    }
+
+    <p class="kb-version">KB version: {{ result.kbVersion }}</p>
+  </section>
+}

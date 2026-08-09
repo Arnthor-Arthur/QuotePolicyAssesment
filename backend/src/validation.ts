@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const PROPERTY_TYPES = ['House', 'Flat'] as const;
+export const PROPERTY_TYPES = ['House', 'Flat', 'Bungalow'] as const;
 
 // Outward code (1-2 letters, 1 digit, optional letter/digit) + inward code (1 digit, 2 letters).
 const UK_POSTCODE_REGEX = /^[A-Z]{1,2}\d[A-Z\d]?\s?\d[A-Z]{2}$/i;

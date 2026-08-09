@@ -16,9 +16,10 @@ describe('quoteRequestSchema — happy path', () => {
         expect(result.data).toEqual(validInput);
     });
 
-    test('accepts the other propertyType enum value', () => {
-        const result = quoteRequestSchema.safeParse({ ...validInput, propertyType: 'Flat' });
-        expect(result.success).toBe(true);
+    test('accepts every propertyType enum value', () => {
+        for (const propertyType of ['House', 'Flat', 'Bungalow']) {
+            expect(quoteRequestSchema.safeParse({ ...validInput, propertyType }).success).toBe(true);
+        }
     });
 
     test('normalizes postcode casing and spacing to canonical form', () => {

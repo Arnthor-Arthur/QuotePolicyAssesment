@@ -1,14 +1,23 @@
-import { CurrencyPipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, signal } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { PROPERTY_TYPES, QuoteRequest, QuoteResponse } from '../../models/quote.model';
 import { QuoteService } from '../../services/quote.service';
+import { QuoteResultComponent } from '../quote-result/quote-result.component';
+
+// Mirrors backend/src/validation.ts exactly (no shared package between the two
+// projects) — kept in sync so a value that passes client-side validation never
+// gets rejected by the backend's Zod schema.
+const UK_POSTCODE_REGEX = /^[A-Z]{1,2}\d[A-Z\d]?\s?\d[A-Z]{2}$/i;
+
+function integerValidator(control: AbstractControl<number | null>): ValidationErrors | null {
+    return control.value == null || Number.isInteger(control.value) ? null : { integer: true };
+}
 
 @Component({
     selector: 'app-quote-form',
     standalone: true,
-    imports: [ReactiveFormsModule, CurrencyPipe],
+    imports: [ReactiveFormsModule, QuoteResultComponent],
     templateUrl: './quote-form.component.html',
     styleUrl: './quote-form.component.css',
 })
@@ -23,11 +32,16 @@ export class QuoteFormComponent {
         name: ['', Validators.required],
         // age/propertyValue opt out of the group's non-nullable default: they should
         // start empty (null) rather than pre-filled with a misleading default number.
-        age: this.fb.control<number | null>(null, [Validators.required, Validators.min(18), Validators.max(120)]),
+        age: this.fb.control<number | null>(null, [
+            Validators.required,
+            Validators.min(18),
+            Validators.max(120),
+            integerValidator,
+        ]),
         propertyType: ['House' as (typeof PROPERTY_TYPES)[number], Validators.required],
         propertyValue: this.fb.control<number | null>(null, [Validators.required, Validators.min(1)]),
-        postcode: ['', Validators.required],
-        previousClaims: [0, [Validators.required, Validators.min(0)]],
+        postcode: ['', [Validators.required, Validators.pattern(UK_POSTCODE_REGEX)]],
+        previousClaims: [0, [Validators.required, Validators.min(0), integerValidator]],
     });
 
     constructor(
@@ -71,9 +85,31 @@ export class QuoteFormComponent {
 
     private extractErrorMessage(err: unknown): string {
         if (err instanceof HttpErrorResponse) {
-            const body = err.error as { error?: string } | null;
+            const body = err.error as { error?: string; details?: unknown } | null;
+            const fieldErrors = this.flattenValidationDetails(body?.details);
+            if (fieldErrors) {
+                return fieldErrors;
+            }
             return body?.error ?? 'Something went wrong while fetching your quote.';
         }
         return 'Something went wrong while fetching your quote.';
+    }
+
+    // Backend 400s carry `details` shaped by Zod's treeifyError: { properties: { <field>: { errors: string[] } } }.
+    // Flattened generically (no field names hardcoded) so any validation rule the backend
+    // enforces — now or added later — shows up as an actionable message here.
+    private flattenValidationDetails(details: unknown): string | null {
+        if (typeof details !== 'object' || details === null || !('properties' in details)) {
+            return null;
+        }
+        const properties = (details as { properties?: Record<string, { errors?: string[] }> }).properties;
+        if (!properties) {
+            return null;
+        }
+
+        const messages = Object.entries(properties).flatMap(([field, value]) =>
+            (value.errors ?? []).map((message) => `${field}: ${message}`),
+        );
+        return messages.length > 0 ? messages.join('; ') : null;
     }
 }

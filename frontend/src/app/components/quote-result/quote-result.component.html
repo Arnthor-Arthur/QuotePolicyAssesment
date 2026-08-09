@@ -1,0 +1,23 @@
+<section class="quote-result">
+  <app-risk-band-badge [riskBand]="quote().riskBand"></app-risk-band-badge>
+
+  <p class="premium">
+    <strong>{{ quote().monthlyPremium | currency: 'GBP' }}</strong> / month
+    <span class="annual">({{ quote().annualPremium | currency: 'GBP' }} / year)</span>
+  </p>
+
+  <p class="summary">{{ quote().riskSummary }}</p>
+
+  @if (quote().appliedFactors.length > 0) {
+    <ul class="applied-factors">
+      @for (factor of quote().appliedFactors; track factor.id) {
+        <li>
+          <span class="description">{{ factor.description }}</span>
+          <span class="points">{{ factor.points }} pts</span>
+        </li>
+      }
+    </ul>
+  }
+
+  <p class="kb-version">KB version: {{ quote().kbVersion }}</p>
+</section>

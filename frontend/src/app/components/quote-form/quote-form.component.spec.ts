@@ -76,11 +76,11 @@ describe('QuoteFormComponent', () => {
 
         fixture.detectChanges();
         const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
-        expect(text).toContain('ELEVATED');
+        expect(text).toContain('Elevated risk');
         expect(text).toContain('something risky');
     });
 
-    it('sets errorMessage and clears loading when the API returns an error', () => {
+    it('sets errorMessage and clears loading when the API returns an error with no field details', () => {
         component.form.setValue(validFormValues);
         component.onSubmit();
 
@@ -94,5 +94,43 @@ describe('QuoteFormComponent', () => {
         fixture.detectChanges();
         const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
         expect(text).toContain('Invalid request.');
+    });
+
+    it('surfaces the specific field reason from a Zod-shaped 400 response', () => {
+        component.form.setValue(validFormValues);
+        component.onSubmit();
+
+        const req = httpMock.expectOne('/policy/quote');
+        req.flush(
+            {
+                error: 'Invalid request.',
+                details: { errors: [], properties: { age: { errors: ['Applicant must be at least 18'] } } },
+            },
+            { status: 400, statusText: 'Bad Request' },
+        );
+
+        expect(component.errorMessage()).toBe('age: Applicant must be at least 18');
+    });
+
+    describe('client-side validators mirroring the backend Zod schema', () => {
+        it('rejects a non-integer age even though it is within range', () => {
+            component.form.setValue({ ...validFormValues, age: 45.5 });
+            expect(component.form.controls.age.valid).toBe(false);
+        });
+
+        it('rejects a non-integer previousClaims', () => {
+            component.form.setValue({ ...validFormValues, previousClaims: 1.5 });
+            expect(component.form.controls.previousClaims.valid).toBe(false);
+        });
+
+        it('rejects a postcode that is not a valid UK format', () => {
+            component.form.setValue({ ...validFormValues, postcode: '12345' });
+            expect(component.form.controls.postcode.valid).toBe(false);
+        });
+
+        it('accepts a postcode without a space, matching the backend regex', () => {
+            component.form.setValue({ ...validFormValues, postcode: 'EX41AB' });
+            expect(component.form.controls.postcode.valid).toBe(true);
+        });
     });
 });

@@ -1,7 +1,32 @@
+/* Unknown custom elements default to display:inline, which under the parent's
+   align-items:center sizes this host to something like min-content instead of
+   the available width — breaking the flex row below. Force block + full width. */
+:host {
+  display: block;
+  width: 100%;
+}
+
+.quote-layout {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 1.5rem;
+  width: 100%;
+}
+
 .quote-form {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  flex: 1 1 28rem;
+  max-width: 28rem;
+  background: #fff;
+  padding: 1.5rem;
+  border: 1px solid var(--brand-border-light);
+}
+
+.quote-output {
+  flex: 1 1 28rem;
   max-width: 28rem;
 }
 
@@ -13,53 +38,57 @@
 
 label {
   font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--brand-text);
 }
 
 input,
 select {
-  padding: 0.5rem;
+  padding: 0.6rem;
   font-size: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  font-family: inherit;
+  color: var(--brand-text);
+  border: 1px solid var(--brand-border);
+  border-radius: 2px;
+}
+
+input:focus,
+select:focus {
+  outline: none;
+  border-color: var(--brand-blue);
+  box-shadow: 0 0 0 1px var(--brand-blue);
 }
 
 button {
-  padding: 0.6rem 1rem;
-  font-size: 1rem;
-  border: none;
-  border-radius: 4px;
-  background: #2b5797;
+  padding: 0.7rem 1.125rem;
+  font-size: 0.89rem;
+  font-weight: 700;
+  font-family: inherit;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  border: 1px solid var(--brand-blue);
+  border-radius: 0;
+  background: var(--brand-blue);
   color: #fff;
   cursor: pointer;
 }
 
+button:hover:not(:disabled) {
+  background: var(--brand-navy);
+  border-color: var(--brand-navy);
+}
+
 button:disabled {
   background: #9aa8ba;
+  border-color: #9aa8ba;
   cursor: not-allowed;
 }
 
 .error {
-  color: #b00020;
+  color: var(--brand-danger);
   font-size: 0.85rem;
 }
 
 .error.banner {
-  margin-top: 1rem;
-}
-
-.quote-result {
-  margin-top: 1.5rem;
-  padding: 1rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  max-width: 28rem;
-}
-
-.applied-factors {
-  padding-left: 1.25rem;
-}
-
-.kb-version {
-  color: #666;
-  font-size: 0.8rem;
+  margin-top: 0;
 }

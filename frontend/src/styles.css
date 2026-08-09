@@ -1,1 +1,39 @@
 /* You can add global styles to this file, and also import other style files */
+
+:root {
+  /* Sourced from AIG's public site stylesheet (clientlib-site.min.css) as a visual
+     reference palette — colors only, no logo/trademark assets, app stays branded
+     as "PolicyQuote". */
+  --brand-navy: #001871;
+  --brand-blue: #1352de;
+  --brand-link: #0073ae;
+  --brand-link-hover: #0057b8;
+  --brand-black: #000;
+  --brand-text: #343741;
+  --brand-text-secondary: #54565b;
+  --brand-border: #dcdcdc;
+  --brand-border-light: #f0f0f0;
+  --brand-bg: #f5f7f9;
+  --brand-success: #32c9a6;
+  --brand-warning: #ff8200;
+  --brand-danger: #e03c31;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Source Sans Pro', -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+  background: var(--brand-bg);
+  color: var(--brand-text);
+}
+
+a {
+  color: var(--brand-link);
+}
+
+a:hover {
+  color: var(--brand-link-hover);
+}

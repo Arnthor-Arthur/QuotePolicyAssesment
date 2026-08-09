@@ -1,0 +1,21 @@
+.badge {
+  display: inline-block;
+  padding: 0.3rem 0.85rem;
+  font-weight: 700;
+  font-size: 0.8rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: #fff;
+}
+
+.badge.standard {
+  background: var(--brand-success);
+}
+
+.badge.elevated {
+  background: var(--brand-warning);
+}
+
+.badge.high-risk {
+  background: var(--brand-danger);
+}

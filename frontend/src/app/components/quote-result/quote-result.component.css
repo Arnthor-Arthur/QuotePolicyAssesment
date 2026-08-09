@@ -1,0 +1,53 @@
+.quote-result {
+  padding: 1.5rem;
+  width: 100%;
+  background: #fff;
+  border: 1px solid var(--brand-border-light);
+  border-top: 4px solid var(--brand-navy);
+}
+
+.premium {
+  margin-top: 1rem;
+  font-size: 1.3rem;
+  color: var(--brand-navy);
+}
+
+.premium strong {
+  font-weight: 700;
+}
+
+.annual {
+  color: var(--brand-text-secondary);
+  font-size: 0.9rem;
+}
+
+.summary {
+  margin-top: 0.5rem;
+  color: var(--brand-text);
+}
+
+.applied-factors {
+  margin-top: 1rem;
+  padding-left: 0;
+  list-style: none;
+  border-top: 1px solid var(--brand-border-light);
+}
+
+.applied-factors li {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--brand-border-light);
+}
+
+.applied-factors .points {
+  color: var(--brand-text-secondary);
+  white-space: nowrap;
+}
+
+.kb-version {
+  margin-top: 1rem;
+  color: var(--brand-text-secondary);
+  font-size: 0.8rem;
+}

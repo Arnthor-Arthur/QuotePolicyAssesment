@@ -3,9 +3,11 @@ export type ConditionOperator = 'eq' | 'gt' | 'gte' | 'lt' | 'lte' | 'between' |
 export interface SimpleCondition {
     field: string;
     operator: ConditionOperator;
-    value?: string | number;
-    min?: number;
-    max?: number;
+    // `| undefined` (not just `?`) so Zod's `.optional()` output — which is `T | undefined`,
+    // not true optionality — satisfies these under `exactOptionalPropertyTypes`.
+    value?: string | number | undefined;
+    min?: number | undefined;
+    max?: number | undefined;
 };
 
 export interface AllOfCondition {
@@ -45,7 +47,7 @@ export interface Factor {
     description: string;
     condition: Condition;
     points: number;
-    perOccurrence?: boolean;
+    perOccurrence?: boolean | undefined;
 }
 
 export type RiskBandName = 'STANDARD' | 'ELEVATED' | 'HIGH_RISK';

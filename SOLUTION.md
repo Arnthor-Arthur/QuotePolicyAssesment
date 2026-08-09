@@ -17,4 +17,4 @@ Postcode is treated as a UK format (regex-validated, not geocoded) since the bri
 
 KB versioning is currently a single active file with a version string echoed in responses.
 In production I'd store KB snapshots (S3 or a small table) keyed by version with a Zod-validated schema gate on load, so the Lambda can pin a specific KB version per request, support rollback.
-I would and give a full audit trail of which rules produced a historical quote without ever requiring an engine redeploy.
+I would make a full audit trail of which rules produced a historical quote without ever requiring an engine redeploy.
